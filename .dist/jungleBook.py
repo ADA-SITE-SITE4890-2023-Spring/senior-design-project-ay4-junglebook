@@ -1,7 +1,19 @@
 import cv2
 import os
+import requests
 
-#thres = 0.45 # Threshold to detect object
+bot_token = "5888189744:AAGTKt566xOOgKTqs_YsM-RIzGLGC6XUAmM"
+chat_id = "-996859396"
+folder_path = "/home/junglebook/Desktop/Object_Detection_Files/jungle_book_photos_detected"
+sent_photos_file = "/home/junglebook/Desktop/Object_Detection_Files/jungle_book_photos_detected/sent_photos.txt"
+
+valid_extensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp"]
+
+if os.path.exists(sent_photos_file):
+    with open(sent_photos_file, "r") as f:
+        sent_photos = set(f.read().splitlines())
+else:
+    sent_photos = set()
 
 classNames = []
 classFile = "./coco.names"
@@ -17,6 +29,12 @@ net.setInputScale(1.0/ 127.5)
 net.setInputMean((127.5, 127.5, 127.5))
 net.setInputSwapRB(True)
 
+def send_photo_to_telegram(photo_path):
+    with open(photo_path, 'rb') as f:
+        photo = {'photo': f 'caption': 'Here is a new photo'}
+        url_photo = f"https://api.telegram.org/bot{bot_token}/sendPhoto?chat_id={chat_id}"
+        response_photo = requests.post(url_photo, files=photo)
+        print(f"Photo is sent: {response_photo.content}")
 
 def getObjects(img, thres, nms, draw=True, objects=[]):
     classIds, confs, bbox = net.detect(img,confThreshold=thres,nmsThreshold=nms)
@@ -47,15 +65,16 @@ if _name_ == "_main_":
 
     while True:
         success,img = cap.read()
-        img,objectInfo = getObjects(img,thres=0.5,nms=0.2,draw=True,objects=["cat","person"])
+        img,objectInfo = getObjects(img,thres=0.5,nms=0.2,draw=False,objects=["person"])
         cv2.imshow("Output",img)
 
         # Save image to disk if person detected
         for box, class_name in objectInfo:
             if class_name == 'person':
-                filename = 'jungle_book_photos_detected/junglebook4_detected.jpg'
+                filename = 'jungle_book_photos_detected/junglebook13_detected.jpg'
                 cv2.imwrite(filename, img)
                 print(f"Image saved as {filename}")
+                send_photo_to_telegram(filename)
                 break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):

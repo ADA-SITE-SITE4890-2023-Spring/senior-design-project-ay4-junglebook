@@ -4,7 +4,10 @@ import requests
 
 bot_token = "5888189744:AAGTKt566xOOgKTqs_YsM-RIzGLGC6XUAmM"
 chat_id = "-996859396"
+<<<<<<< HEAD
 text='Here is the New Photo!'
+=======
+>>>>>>> b147948461c6acdeb104fd7fa7e26f74dbed6a42
 folder_path = "/home/junglebook/Desktop/Object_Detection_Files/jungle_book_photos_detected"
 sent_photos_file = "/home/junglebook/Desktop/Object_Detection_Files/jungle_book_photos_detected/sent_photos.txt"
 
@@ -32,6 +35,7 @@ net.setInputSwapRB(True)
 
 def send_photo_to_telegram(photo_path):
     with open(photo_path, 'rb') as f:
+<<<<<<< HEAD
         photo = {'photo':f,'caption' : 'New photo'}
         url_photo = f"https://api.telegram.org/bot{bot_token}/sendPhoto?chat_id={chat_id}"
         response_photo = requests.post(url_photo, files=photo)
@@ -42,6 +46,12 @@ def send_message_to_telegram():
     url_message = f"https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={chat_id}&text={text}"
     response_photo = requests.post(url_message, files=photo)
     print(f"Photo is sent: {response_photo}")
+=======
+        photo = {'photo': f 'caption': 'Here is a new photo'}
+        url_photo = f"https://api.telegram.org/bot{bot_token}/sendPhoto?chat_id={chat_id}"
+        response_photo = requests.post(url_photo, files=photo)
+        print(f"Photo is sent: {response_photo.content}")
+>>>>>>> b147948461c6acdeb104fd7fa7e26f74dbed6a42
 
 def getObjects(img, thres, nms, draw=True, objects=[]):
     classIds, confs, bbox = net.detect(img,confThreshold=thres,nmsThreshold=nms)
@@ -72,11 +82,16 @@ if _name_ == "_main_":
     i = 0
     while True:
         success,img = cap.read()
+<<<<<<< HEAD
         result, objectInfo = getObjects(img,0.45,0.2)
+=======
+        img,objectInfo = getObjects(img,thres=0.5,nms=0.2,draw=False,objects=["person"])
+>>>>>>> b147948461c6acdeb104fd7fa7e26f74dbed6a42
         cv2.imshow("Output",img)
 
         # Save image to disk if person detected
         for box, class_name in objectInfo:
+<<<<<<< HEAD
             if class_name == 'chair':
 
                 filename = f'jungle_book_photos_detected/junglebook_photo_detected_{i}.jpg'
@@ -85,6 +100,13 @@ if _name_ == "_main_":
                 print(f"Image saved as {filename}")
                 send_photo_to_telegram(filename)
                 send_message_to_telegram()
+=======
+            if class_name == 'person':
+                filename = 'jungle_book_photos_detected/junglebook13_detected.jpg'
+                cv2.imwrite(filename, img)
+                print(f"Image saved as {filename}")
+                send_photo_to_telegram(filename)
+>>>>>>> b147948461c6acdeb104fd7fa7e26f74dbed6a42
                 break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
